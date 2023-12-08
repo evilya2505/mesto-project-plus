@@ -27,7 +27,7 @@ declare module 'express-serve-static-core' {
 
 app.use((req: Request, res: Response, next: NextFunction) => {
   req.user = {
-    _id: '656501ad91d5631a54a376ef',
+    _id: '6573748a527e068a49a15230',
   };
 
   next();

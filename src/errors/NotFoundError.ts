@@ -1,5 +1,5 @@
 const { constants } = require('http2');
-const ErrorMessages = require('../types/errors');
+import ErrorMessages from '../types/errors';
 
 class NotFoundError extends Error {
   statusCode: number;
