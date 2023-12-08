@@ -1,5 +1,5 @@
-import StatusCodes from "../types/codes";
-import ErrorMessages from "../types/errors";
+import { constants } from 'http2';
+import ErrorMessages from '../types/errors';
 
 class BadRequestError extends Error {
   statusCode: number;
@@ -7,7 +7,7 @@ class BadRequestError extends Error {
   constructor(message: string) {
     super(message);
     this.name = ErrorMessages.BAD_REQUEST_ERROR;
-    this.statusCode = StatusCodes.BAD_REQUEST_CODE;
+    this.statusCode = constants.HTTP_STATUS_BAD_REQUEST;
   }
 }
 

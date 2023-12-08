@@ -1,5 +1,5 @@
-import StatusCodes from "../types/codes";
-import ErrorMessages from "../types/errors";
+import { constants } from 'http2';
+import ErrorMessages from '../types/errors';
 
 class ForbiddenError extends Error {
   statusCode: number;
@@ -7,7 +7,7 @@ class ForbiddenError extends Error {
   constructor(message: string) {
     super(message);
     this.name = ErrorMessages.FORBIDDENT_ERROR;
-    this.statusCode = StatusCodes.FORBIDDENT_CODE;
+    this.statusCode = constants.HTTP_STATUS_FORBIDDEN;
   }
 }
 
