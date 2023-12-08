@@ -1,4 +1,4 @@
-const { constants } = require('http2');
+import { constants } from 'http2';
 import ErrorMessages from '../types/errors';
 
 class NotFoundError extends Error {
@@ -11,5 +11,5 @@ class NotFoundError extends Error {
   }
 }
 
-module.exports = NotFoundError;
-// export default NotFoundError;
+// module.exports = NotFoundError;
+export default NotFoundError;

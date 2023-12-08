@@ -1,9 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
+import NotFoundError from '../errors/NotFoundError';
 import User from '../models/user';
 import BadRequestError from '../errors/BadRequestError';
 import ConflictError from '../errors/ConflictError';
-
-const NotFoundError = require('../errors/NotFoundError');
 
 // Получить всех пользователей
 const getUsers = (req: Request, res: Response) => {
