@@ -20,11 +20,7 @@ const getUserById = (req: Request, res: Response, next: NextFunction) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new BadRequestError('Переданы неккоректные данные.');
-      } else {
-        next(err);
-      }
+      next(err);
     })
     .catch(next);
 };
@@ -40,10 +36,12 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
   })
     .then((user) => res.send({ data: user }))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы неккоректные данные.');
       } else if (err.name === 'MongoServerError' && err.code === 11000) {
         throw new ConflictError('Пользователь с таким email уже существует.');
+      } else {
+        next(err);
       }
     })
     .catch(next);
@@ -79,7 +77,7 @@ const updateUserInfo = (req: Request, res: Response, next: NextFunction) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы неккоректные данные.');
       } else {
         next(err);
@@ -106,7 +104,7 @@ const updateUserAvatar = (req: Request, res: Response, next: NextFunction) => {
       res.send({ data: user });
     })
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы неккоректные данные.');
       } else {
         next(err);

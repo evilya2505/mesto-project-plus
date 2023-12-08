@@ -15,14 +15,12 @@ const userSchema = new mongoose.Schema<IUser>({
     default: 'Жак-Ив-Кусто',
     minlength: 2,
     maxlength: 30,
-    required: true,
   },
   about: {
     type: String,
     default: 'Исследователь',
     minlength: 2,
     maxlength: 30,
-    required: true,
   },
   avatar: {
     type: String,
@@ -35,7 +33,6 @@ const userSchema = new mongoose.Schema<IUser>({
         );
       },
     },
-    required: true,
   },
 });
 

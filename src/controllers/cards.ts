@@ -22,8 +22,10 @@ const createCard = (req: Request, res: Response, next: NextFunction) => {
   Card.create({ name, link, owner: _id })
     .then((card) => res.send({ data: card }))
     .catch((err) => {
-      if (err.name === 'CastError' || err.name === 'ValidationError') {
+      if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы неккоректные данные.');
+      } else {
+        next(err);
       }
     })
     .catch(next);
@@ -41,14 +43,12 @@ const deleteCard = (req: Request, res: Response, next: NextFunction) => {
       }
 
       Card.findByIdAndDelete(req.params.cardId).then((data) => {
-        res.send({ data });
+        return res.send({ data });
       });
     })
     .catch((err) => {
       if (err.name === 'Not Found') {
         throw new NotFoundError('Карточка с указанным _id не найдена.');
-      } else if (err.name === 'CastError') {
-        throw new BadRequestError('Переданы некорректные данные.');
       } else {
         next(err);
       }
@@ -70,11 +70,7 @@ const putLike = (req: Request, res: Response, next: NextFunction) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new BadRequestError('Переданы неккоректные данные.');
-      } else {
-        next(err);
-      }
+      next(err);
     })
     .catch(next);
 };
@@ -93,11 +89,7 @@ const removeLike = (req: Request, res: Response, next: NextFunction) => {
       res.send({ data: card });
     })
     .catch((err) => {
-      if (err.name === 'CastError') {
-        throw new BadRequestError('Переданы неккоректные данные.');
-      } else {
-        next(err);
-      }
+      next(err);
     })
     .catch(next);
 };
