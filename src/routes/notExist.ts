@@ -1,6 +1,5 @@
 import { Router, Request, Response } from 'express';
-
-const NotFoundError = require('../errors/NotFoundError');
+import NotFoundError from '../errors/NotFoundError';
 
 const router = Router();
 const notFoundError = new NotFoundError('Запрашиваемый ресурс не найден.');
