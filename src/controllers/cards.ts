@@ -39,8 +39,9 @@ const deleteCard = (req: Request, res: Response, next: NextFunction) => {
         throw new ForbiddenError('Нет прав для удаления карточки.');
       }
 
+      // eslint-disable-next-line arrow-body-style
       Card.findByIdAndDelete(req.params.cardId).then((data) => {
-        res.send({ data });
+        return res.send({ data });
       });
     })
     .catch((err) => {

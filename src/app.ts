@@ -1,9 +1,11 @@
 import mongoose from 'mongoose';
 import express, { Request, Response, NextFunction } from 'express';
 import type { ErrorRequestHandler } from 'express';
+import { constants } from 'http2';
 import usersRouter from './routes/users';
 import cardsRouter from './routes/cards';
 import notExistRouter from './routes/notExist';
+
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
 
@@ -38,7 +40,7 @@ app.use('/cards', cardsRouter);
 
 // eslint-disable-next-line no-unused-vars
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
-  const { name, statusCode = 500, message } = err;
+  const { name, statusCode = constants.HTTP_STATUS_INTERNAL_SERVER_ERROR, message } = err;
 
   res.status(statusCode).send({ message: `${name}: ${message}` });
 };
