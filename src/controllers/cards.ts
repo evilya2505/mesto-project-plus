@@ -23,6 +23,8 @@ const createCard = (req: Request, res: Response, next: NextFunction) => {
     .catch((err) => {
       if (err.name === 'CastError' || err.name === 'ValidationError') {
         throw new BadRequestError('Переданы неккоректные данные.');
+      } else {
+        next(err);
       }
     })
     .catch(next);
@@ -40,7 +42,7 @@ const deleteCard = (req: Request, res: Response, next: NextFunction) => {
       }
 
       // eslint-disable-next-line arrow-body-style
-      Card.findByIdAndDelete(req.params.cardId).then((data) => {
+      return Card.findByIdAndDelete(req.params.cardId).then((data) => {
         return res.send({ data });
       });
     })
