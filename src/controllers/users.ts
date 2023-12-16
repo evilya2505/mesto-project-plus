@@ -3,6 +3,11 @@ import NotFoundError from '../errors/NotFoundError';
 import User from '../models/user';
 import BadRequestError from '../errors/BadRequestError';
 import ConflictError from '../errors/ConflictError';
+import UnauthorizedError from '../errors/UnauthorizedError';
+import bcrypt from "bcrypt";
+import jwt from 'jsonwebtoken';
+
+const { NODE_ENV, JWT_SECRET } = process.env;
 
 // Получить всех пользователей
 const getUsers = (req: Request, res: Response) => {
@@ -26,14 +31,31 @@ const getUserById = (req: Request, res: Response, next: NextFunction) => {
 
 // Создать пользователя
 const createUser = (req: Request, res: Response, next: NextFunction) => {
-  const { name, about, avatar } = req.body;
+  const { name, about, avatar, email, password } = req.body;
 
-  User.create({
-    name,
-    about,
-    avatar,
-  })
-    .then((user) => res.send({ data: user }))
+  bcrypt.hash(password, 10)
+    .then((hash) => User.create({
+      name,
+      about,
+      avatar,
+      email,
+      password: hash,
+    }))
+    .then((user) => {
+      const {
+        name: userName,
+        about: userAbout,
+        avatar: userAvatar,
+        email: userEmail,
+        _id: userID,
+      } = user;
+
+      res.send({
+        data: {
+          name: userName, about: userAbout, avatar: userAvatar, email: userEmail, _id: userID,
+        },
+      });
+    })
     .catch((err) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы неккоректные данные.');
@@ -42,6 +64,34 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
       } else {
         next(err);
       }
+    })
+    .catch(next);
+};
+
+// Контроллер получсет из запроса почту и пароль и проверяет их.
+const login = (req: Request, res: Response, next: NextFunction) => {
+  const { email, password } = req.body;
+  let _id: string;
+
+  User.findOne({ email }).select('+password')
+    .then((user) => {
+      if (!user) {
+        throw new UnauthorizedError('Неправильная почта или пароль.');
+      }
+
+      _id = user._id.toString();
+      return bcrypt.compare(password, user.password);
+    })
+    .then((matched) => {
+      if (!matched) {
+        throw new UnauthorizedError('Неправильная почта или пароль.');
+      }
+
+      const secret = NODE_ENV === 'production' && JWT_SECRET ? JWT_SECRET : 'dev-secret';
+
+      const token = jwt.sign({ _id }, secret, { expiresIn: '7d' });
+
+      res.send({ token });
     })
     .catch(next);
 };
@@ -119,4 +169,5 @@ export {
   getUserInfo,
   updateUserInfo,
   updateUserAvatar,
+  login,
 };

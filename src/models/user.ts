@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import validator from 'validator';
 
 export interface IUser {
   name: string;
@@ -33,6 +34,21 @@ const userSchema = new mongoose.Schema<IUser>({
         );
       },
     },
+  },
+  email: {
+    type: String,
+    unique: true,
+    validate: {
+      validator(v: string) {
+        return validator.isEmail(v);
+      },
+    },
+  },
+  password: {
+    type: String,
+    required: true,
+    select: false,
+    minlength: 3,
   },
 });
 
