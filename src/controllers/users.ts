@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import NotFoundError from '../errors/NotFoundError';
 import User from '../models/user';
 import BadRequestError from '../errors/BadRequestError';
 import ConflictError from '../errors/ConflictError';
 import UnauthorizedError from '../errors/UnauthorizedError';
-import bcrypt from "bcrypt";
-import jwt from 'jsonwebtoken';
 
 const { NODE_ENV, JWT_SECRET } = process.env;
 
@@ -31,17 +31,19 @@ const getUserById = (req: Request, res: Response, next: NextFunction) => {
 
 // Создать пользователя
 const createUser = (req: Request, res: Response, next: NextFunction) => {
-  const { name, about, avatar, email, password } = req.body;
+  const {
+    name, about, avatar, email, password,
+  } = req.body;
 
   bcrypt.hash(password, 10)
-    .then((hash) => User.create({
+    .then((hash: string) => User.create({
       name,
       about,
       avatar,
       email,
       password: hash,
     }))
-    .then((user) => {
+    .then((user: any) => {
       const {
         name: userName,
         about: userAbout,
@@ -56,7 +58,7 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
         },
       });
     })
-    .catch((err) => {
+    .catch((err: any) => {
       if (err.name === 'ValidationError') {
         throw new BadRequestError('Переданы неккоректные данные.');
       } else if (err.name === 'MongoServerError' && err.code === 11000) {
@@ -71,6 +73,7 @@ const createUser = (req: Request, res: Response, next: NextFunction) => {
 // Контроллер получсет из запроса почту и пароль и проверяет их.
 const login = (req: Request, res: Response, next: NextFunction) => {
   const { email, password } = req.body;
+  // eslint-disable-next-line no-underscore-dangle
   let _id: string;
 
   User.findOne({ email }).select('+password')
@@ -79,6 +82,7 @@ const login = (req: Request, res: Response, next: NextFunction) => {
         throw new UnauthorizedError('Неправильная почта или пароль.');
       }
 
+      // eslint-disable-next-line no-underscore-dangle
       _id = user._id.toString();
       return bcrypt.compare(password, user.password);
     })

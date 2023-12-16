@@ -1,14 +1,14 @@
 import mongoose from 'mongoose';
-import express, { Request, Response, NextFunction } from 'express';
+import express from 'express';
 import type { ErrorRequestHandler } from 'express';
 import { constants } from 'http2';
+import { celebrate, Joi } from 'celebrate';
 import usersRouter from './routes/users';
 import cardsRouter from './routes/cards';
 import notExistRouter from './routes/notExist';
 import auth from './middlewares/auth';
 import { createUser, login } from './controllers/users';
 import { requestLogger, errorLogger } from './middlewares/logger';
-import { celebrate, Joi } from 'celebrate';
 
 // Слушаем 3000 порт
 const { PORT = 3000 } = process.env;
@@ -30,14 +30,6 @@ declare module 'express-serve-static-core' {
     user: User;
   }
 }
-
-// app.use((req: Request, res: Response, next: NextFunction) => {
-//   req.user = {
-//     _id: '6573748a527e068a49a15230',
-//   };
-
-//   next();
-// });
 
 app.use(requestLogger);
 
